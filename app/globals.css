@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+  div.container-ticket {
+    overflow: hidden;
+    position: relative;
+    margin: 0 auto;
+  }
+  .upcomming {
+    font-size: 45px;
+    text-transform: uppercase;
+    border-left: 14px solid rgba(255, 235, 59, 0.78);
+    padding-left: 12px;
+    margin: 18px 8px;
+  }
+  .container-ticket .item {
+    padding: 0 20px;
+    background: #fff;
+    overflow: hidden;
+    margin: 10px
+  }
+  .container-ticket .item-right, .container-ticket .item-left {
+    float: left;
+    padding: 20px 
+  }
+  .container-ticket .item-right {
+    padding: 50px 50px;
+    margin-right: 20px;
+    width: 25%;
+    position: relative;
+  }
+  .container-ticket .item-right .up-border, .container-ticket .item-right .down-border {
+      padding: 14px 15px;
+      background-color: #111827;
+      border-radius: 50%;
+      position: absolute
+  }
+  .container-ticket .item-right .up-border {
+    top: -8px;
+    right: -35px;
+  }
+  .container-ticket .item-right .down-border {
+    bottom: -13px;
+    right: -35px;
+  }
+  .container-ticket .item-right .num {
+    font-size: 55px;
+    text-align: center;
+    color: #111
+  }
+  .container-ticket .item-right .day, .container-ticket .item-left .event {
+    color: #555;
+    font-size: 20px;
+    margin-bottom: 9px;
+  }
+  .container-ticket .item-right .day {
+    text-align: center;
+    font-size: 25px;
+  }
+  .container-ticket .item-left {
+    width: 71%;
+    padding: 34px 0px 19px 46px;
+    border-left: 3px dotted #999;
+  } 
+  .container-ticket .item-left .title {
+    color: #111;
+    font-size: 24px;
+    margin-bottom: 12px
+  }
+  .container-ticket .item-left .sce {
+    margin-top: 5px;
+    display: block
+  }
+  .container-ticket .item-left .sce .icon, .container-ticket .item-left .sce p,
+  .container-ticket .item-left .loc .icon, .container-ticket .item-left .loc p{
+      float: left;
+      word-spacing: 5px;
+      letter-spacing: 1px;
+      color: #888;
+      margin-bottom: 10px;
+  }
+  .container-ticket .item-left .sce .icon, .container-ticket .item-left .loc .icon {
+    margin-right: 10px;
+    font-size: 20px;
+    color: #666
+  }
+  .container-ticket .item-left .loc {display: block}
+  .fix {clear: both}
+  .container-ticket .item .tickets, .booked, .cancel{
+      color: #fff;
+      padding: 6px 14px;
+      float: right;
+      margin-top: 10px;
+      font-size: 18px;
+      border: none;
+      cursor: pointer
+  }
+  .container-ticket .item .tickets {background: #777}
+  .container-ticket .item .booked {background: #3D71E9}
+  .container-ticket .item .cancel {background: #DF5454}
+  .linethrough {text-decoration: line-through}
+  @media only screen and (max-width: 1150px) {
+    .container-ticket .item {
+      width: 100%;
+      margin-right: 20px
+    }
+    div.container-ticket {
+      margin: 0 20px auto
+    }
+  }
+
