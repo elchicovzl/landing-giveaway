@@ -29,7 +29,7 @@ export const LandingNavbar = () => {
         <div className="flex items-center">
           <Link href="/boletas" className="flex items-center hover:text-gray-50">
             <Ticket className="text-white mr-2" width='16' height='16' />
-            <span className="mr-3 font-medium text-gray-50">Boletas</span>
+            <span className="mr-3 font-medium text-gray-50">Tus Boletas</span>
           </Link>
           <div className="rounded-full border-2 border-cyan-50"><UserButton afterSignOutUrl="/" /></div>
           

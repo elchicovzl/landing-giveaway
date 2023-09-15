@@ -1,13 +1,15 @@
-import { LandingNavbar } from "@/components/landing-navbar";
-import LandingHero from "@/components/landing-hero";
-import { LandingContent } from "@/components/landing-content";
-import getGiveways from "@/actions/get-giveways";
-import TypewriterComponent from "typewriter-effect";
+export const dynamic = 'force-dynamic';
+import { getGivewayFeatured } from "@/actions/get-giveways";
 import FeatureGiveway from "../components/feature-giveway";
+import LandingHero from "@/components/landing-hero";
+import {getTickets} from "@/actions/get-tickets";
+
+
 
 const LandingPage = async () => {
 
-  const giveway = await getGiveways("6d14edb4-57a6-4f68-a4a5-cce446224cf6", "c163b39a-9290-4ac6-a69f-9bff5b4d9951");
+  const giveway = await getGivewayFeatured();
+  const tickets = await getTickets(giveway.id);
   
   return ( 
     <div className="h-full">
@@ -20,7 +22,7 @@ const LandingPage = async () => {
           contenido variado agrrgar info del cliente.
         </div>
       {(giveway != null)? 
-        <FeatureGiveway data={giveway}  />
+        <FeatureGiveway data={giveway} tickets={tickets.length}  />
         :
         <h2 className="text-5xl">No hay Sorteos en este momento.</h2>
       }

@@ -1,28 +1,39 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs';
+import { auth, currentUser } from '@clerk/nextjs';
 
 export async function POST(
     req: Request,
   ) {
     try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+        const store = process.env.NEXT_PUBLIC_LANDING_STORE;
+
         const { userId } = auth();
         const body = await req.json();
+
+        const { transactionId, qtyTickets, price, gatewayId, giveawayId } = body;
+        const {  username, emailAddresses, firstName, lastName } = await currentUser();
         
-        const { transactionId, qtyTickets, imageSrc, price } = body;
-  
+        const fullname = `${firstName} ${lastName}`;
+        const emailObj = emailAddresses[0];
+
+        console.log("fullname:", fullname);
+        console.log("que es:", emailObj);
+        console.log("email:", emailObj.emailAddress);
+        
         if (!userId) {
             return new NextResponse("Unauthorized", { status: 403 });
         }
+        
+        if (!giveawayId) {
+          return new NextResponse("Sorteo es requerido", { status: 400 });
+        }
   
         if (!transactionId) {
-            return new NextResponse("Transaccion es requeridaa", { status: 400 });
+            return new NextResponse("Transaccion es requerida", { status: 400 });
         }
 
-      /* if (!imageSrc) {
-        return new NextResponse("imagen es requerida", { status: 400 });
-      } */
-
-        const res = await fetch(`http://localhost:3001/api/6d14edb4-57a6-4f68-a4a5-cce446224cf6/giveways/c163b39a-9290-4ac6-a69f-9bff5b4d9951/transactions`, {
+        const res = await fetch(`${apiUrl}/api/${store}/giveways/${giveawayId}/transactions`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -30,27 +41,15 @@ export async function POST(
           body: JSON.stringify({
             transactionId,
             qtyTickets,
-            imageSrc,
             total:price,
-            user:userId
+            user:userId,
+            email:emailObj.emailAddress,
+            fullname,
+            gatewayId
           }),
         })
        
         const data = await res.json()
-
-        console.log("respuesta")
-        console.log(data)
-
-
-      /* const store = await prismadb.profile.create({
-        data: {
-          name:fullname,
-          email,
-          role,
-          userId,
-          storeId:'asdsa' 
-        }
-      }); */
     
         return NextResponse.json(data);
     } catch (error) {

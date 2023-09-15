@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  height: 100vh !important;
+}
+
+  .waybox-button {
+    max-width: 20rem;
+    --tw-bg-opacity: 1;
+    background-color: rgb(99 102 241 / var(--tw-bg-opacity)) !important;
+    width: 100%;
+  }
+
+  .waybox-button:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgb(67 56 202 / var(--tw-bg-opacity)) !important;
+  }
 
   div.container-ticket {
     overflow: hidden;

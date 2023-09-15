@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import * as z from "zod"
 import axios from "axios"
 import { toast } from "react-hot-toast"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Input } from "@/components/ui/input"
-import { useAuth, UserButton } from "@clerk/nextjs"
-import { useParams, useRouter } from "next/navigation"
+import { useAuth} from "@clerk/nextjs"
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
     Form,
@@ -24,12 +25,15 @@ import { Badge } from "@/components/ui/badge"
 import { NumericFormat } from "react-number-format"
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
+import randomCode from 'crypto-random-string';
+import { sha256 } from 'js-sha256';
+import {Helmet} from "react-helmet";
 
 const formSchema = z.object({
-    transactionId: z.string().min(2),
-    qtyTickets: z.string(),
-    imageSrc: z.string(),
-    price:z.string()
+    qtyTickets: z.string().min(1),
+    price: z.string().nullable(),
+    transactionId: z.string().nullable(),
+    giveawayId: z.string().nullable()
 });
 
 import { GiveWay } from "@/types";
@@ -39,40 +43,59 @@ import ImageUpload from "./ui/image-uplaod";
 
 interface GiveWaydProps {
   data: GiveWay;
+  tickets: number 
 }
 
 type FormValues = z.infer<typeof formSchema>
 
 const FeatureGiveway: React.FC<GiveWaydProps> = ({
-    data
+    data,
+    tickets
   }) => {
     const router = useRouter();
     const { isSignedIn } = useAuth();
     const [loading, setLoading] = useState(false);
     const [total, setTotal] = useState(0);
-    
+    const [ntickets, setNtickets] = useState(tickets);
+
+    let referenceCode = randomCode({length: 6, type: "alphanumeric"});
+    referenceCode = `${referenceCode}${Date.now()}`
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues:  {
-            transactionId: '',
             qtyTickets: '',
-            imageSrc: '',
-            price:''
+            price:'',
+            transactionId:'',
+            giveawayId: ''
         }
     });
+
+    useEffect(() => {
+        const subscription = form.watch((value, { name, type }) => {
+            
+            if (name == "qtyTickets" && type == "change") {
+                let val = parseInt(value.qtyTickets) *  parseInt(data.price);
+                setTotal(val)
+            } 
+        })
+        return () => {
+            subscription.unsubscribe()
+        }
+      }, [form.watch, data]);
 
     const onSubmit = async (values: FormValues) => {
         try {
           setLoading(true);
-          console.log("in data.submit")
           values.price = total.toString();
-          console.log(values);
+          values.transactionId = referenceCode;
+          values.giveawayId = data.id;
+
           const resp = await axios.post(`/api/transaction`, values);
-          console.log(resp);
-          toast.success("Compra Realizada con exito!!.");
+          toast.success("Espere mientras pasamos al proceso de compra!!.");
           form.reset();
           router.refresh();
+          router.push(`/transaccion/${referenceCode}!${data.id}`)
         } catch (error: any) {
           toast.error('Algo malo ocurrió.');
         } finally {
@@ -91,6 +114,7 @@ const FeatureGiveway: React.FC<GiveWaydProps> = ({
                     </p>
                     <div className="my-8 text-left">
                         <p className="text-violet-400"><span className="font-medium text-gray-50">Fecha del sorteo: </span> { format(Date.parse(data.giveawayDate), "MMMM dd, yyyy", {locale:es})}</p>
+                        <p className="text-violet-400"><span className="font-medium text-gray-50">Boletas disponibles: </span> {ntickets.toString()}</p>
                         <p className="text-violet-400"><span className="font-medium text-gray-50">Precio de la boleta: </span>
                         <NumericFormat
                             displayType="text"
@@ -103,8 +127,9 @@ const FeatureGiveway: React.FC<GiveWaydProps> = ({
                     </div>
                     {!isSignedIn
                         ? <Link href="/sign-in"> <Button variant="outline" className="w-full py-2 font-semibold rounded border-0 bg-violet-400 hover:bg-violet-500 text-gray-900"> Inicia Sessión para comprar </Button></Link>
-                        : <Form {...form}>
-                            <form  onSubmit={form.handleSubmit(onSubmit)} onChange={(e) => ((e.target.type == "select-one") && setTotal(parseInt(e.target.value)*parseInt(data.price)))} className="space-y-8 w-full text-left">
+                        : 
+                          <Form {...form}>
+                            <form id="form1"  onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full text-left">
                                 <FormField
                                     control={form.control}
                                     name="qtyTickets"
@@ -112,15 +137,15 @@ const FeatureGiveway: React.FC<GiveWaydProps> = ({
                                         <FormItem>
                                         <FormLabel>Cantidad de boletas</FormLabel>
                                         <FormControl>
-                                            <Select  disabled={loading} onValueChange={field.onChange}   value={field.value} defaultValue={field.value}>
+                                            <Select   disabled={loading} onValueChange={field.onChange}   value={field.value} defaultValue={field.value}>
                                                 <SelectTrigger className="placeholder:text-gray-500 text-gray-500" >
                                                     <SelectValue className="placeholder:text-gray-500 text-gray-500" defaultValue={field.value} placeholder="Seleccione una cantidad" />
                                                 </SelectTrigger>
                                                 <SelectContent onSelect={field.onChange}>
-                                                <SelectItem value="1">1</SelectItem>
-                                                <SelectItem value="2">2</SelectItem>
-                                                <SelectItem value="5">5</SelectItem>
-                                                <SelectItem value="10">10</SelectItem>
+                                                <SelectItem value="1" disabled={(ntickets<1)}>1</SelectItem>
+                                                <SelectItem value="2" disabled={(ntickets<2)}>2</SelectItem>
+                                                <SelectItem value="5" disabled={(ntickets<5)}>5</SelectItem>
+                                                <SelectItem value="10" disabled={(ntickets<10)}>10</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </FormControl>
@@ -140,7 +165,7 @@ const FeatureGiveway: React.FC<GiveWaydProps> = ({
                                     </Badge>
                                 </div>
                                 
-                                <FormField
+                                {/* <FormField
                                     control={form.control}
                                     name="transactionId"
                                     render={({ field }) => (
@@ -152,8 +177,8 @@ const FeatureGiveway: React.FC<GiveWaydProps> = ({
                                         <FormMessage />
                                         </FormItem>
                                     )}
-                                />
-                                <FormField
+                                /> */}
+                               {/*  <FormField
                                     control={form.control}
                                     name="imageSrc"
                                     render={({ field }) => (
@@ -170,15 +195,17 @@ const FeatureGiveway: React.FC<GiveWaydProps> = ({
                                         <FormMessage />
                                         </FormItem>
                                     )}
-                                    />
-                                <Button disabled={loading} className="w-full py-2 font-semibold rounded bg-violet-400 hover:bg-violet-500 text-gray-900" type="submit">
+                                /> */}
+                                
+                                <Button disabled={loading || !form.formState.isValid} className="w-full py-2 font-semibold rounded bg-violet-400 hover:bg-violet-500 text-gray-900" type="submit">
+                                    {loading && (
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    )}
                                     Comprar boleta
                                 </Button>
                             </form>
                         </Form>
                     }
-                    
-                    
                 </div>
                 <Image width="600" height="400" src={data?.imageSrc} alt={data.name} className="object-cover w-full rounded-md xl:col-span-3 bg-gray-500 " />
             </div>
@@ -187,5 +214,3 @@ const FeatureGiveway: React.FC<GiveWaydProps> = ({
 }
  
 export default FeatureGiveway;
-
-

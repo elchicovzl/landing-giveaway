@@ -9,6 +9,7 @@ import { ModalProvider } from '@/components/modal-provider'
 import { LandingNavbar } from '@/components/landing-navbar';
 
 const font = Urbanist({ subsets: ['latin'] })
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Landing demo Sorteos',
