@@ -37,7 +37,7 @@ const BoletasPage = async () => {
             <div className="grid grid-cols-1 gap-2 mt-10">
                 {tickets.map((ticket:Ticket) => 
                     (
-                        <TicketSold data={ticket} giveway={giveway} />
+                        <TicketSold key={ticket.id} data={ticket} giveway={giveway} />
                     )) 
                 }
             </div>

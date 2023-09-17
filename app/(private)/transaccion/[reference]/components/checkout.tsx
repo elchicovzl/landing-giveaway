@@ -8,6 +8,7 @@ import { NumericFormat } from "react-number-format";
 import useRedirectAfterSeconds from '@/hooks/use-redirect-after-seconds';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { TriangleIcon, ShieldCheck } from 'lucide-react';
+import { RedirectAfrer } from '@/components/redirect-after-seconds';
 
 interface CheckoutProps {
     transaction: Transaction;
@@ -26,29 +27,28 @@ const Checkout : React.FC<CheckoutProps> = ({
 
     if (gatewayId) {
         if (transaction.gatewayId == gatewayId) {
-            const { secondsRemaining } = useRedirectAfterSeconds('/boletas', 6);
             return (
+                
                 <div className="h-screen text-center">
-                    <Alert variant="default">
-                        <ShieldCheck className="h-5 w-5" />
-                        <AlertTitle>Su pago fue realizado con exito.</AlertTitle>
-                        <AlertDescription>
-                            {secondsRemaining} {secondsRemaining > 1 ? 'seconds' : 'second'}.
-                        </AlertDescription>
-                    </Alert>
+                    <RedirectAfrer 
+                        icon={<ShieldCheck className="h-5 w-5" />} 
+                        variant="default"
+                        title="Su Pago fue Exitoso." 
+                        seconds={5} 
+                        redirect="/boletas" 
+                    />
                 </div>
             )
         }else {
-            const { secondsRemaining } = useRedirectAfterSeconds('/', 5);
             return (
                 <div className="h-screen text-center">
-                    <Alert variant="destructive">
-                    <TriangleIcon className="h-5 w-5" />
-                    <AlertTitle>Hubo un error con su transaccion vuelva a intentarlo.</AlertTitle>
-                    <AlertDescription>
-                        {secondsRemaining} {secondsRemaining > 1 ? 'seconds' : 'second'}.
-                    </AlertDescription>
-                    </Alert>
+                    <RedirectAfrer 
+                        icon={<ShieldCheck className="h-5 w-5" />}
+                        variant="destructive"
+                        title="Hubo un error con su transaccion vuelva a intentarlo." 
+                        seconds={5} 
+                        redirect="/" 
+                    />
                 </div>
             )
         }
