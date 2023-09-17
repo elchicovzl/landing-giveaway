@@ -5,24 +5,57 @@ import { GiveWay, Transaction } from '@/types';
 import { Ticket } from "lucide-react";
 import { useSearchParams } from 'next/navigation';
 import { NumericFormat } from "react-number-format";
+import useRedirectAfterSeconds from '@/hooks/use-redirect-after-seconds';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { TriangleIcon, ShieldCheck } from 'lucide-react';
 
 interface CheckoutProps {
     transaction: Transaction;
     giveway: GiveWay;
-  }
+    user: string;
+}
 
 const Checkout : React.FC<CheckoutProps> = ({
     transaction,
-    giveway
+    giveway,
+    user
   }) => {
 
     const searchParams = useSearchParams();
+    const gatewayId = searchParams.get('id');
 
-    const id = searchParams.get('id');
+    if (gatewayId) {
+        if (transaction.gatewayId == gatewayId) {
+            const { secondsRemaining } = useRedirectAfterSeconds('/boletas', 6);
+            return (
+                <div className="h-screen text-center">
+                    <Alert variant="default">
+                        <ShieldCheck className="h-5 w-5" />
+                        <AlertTitle>Su pago fue realizado con exito.</AlertTitle>
+                        <AlertDescription>
+                            {secondsRemaining} {secondsRemaining > 1 ? 'seconds' : 'second'}.
+                        </AlertDescription>
+                    </Alert>
+                </div>
+            )
+        }else {
+            const { secondsRemaining } = useRedirectAfterSeconds('/', 5);
+            return (
+                <div className="h-screen text-center">
+                    <Alert variant="destructive">
+                    <TriangleIcon className="h-5 w-5" />
+                    <AlertTitle>Hubo un error con su transaccion vuelva a intentarlo.</AlertTitle>
+                    <AlertDescription>
+                        {secondsRemaining} {secondsRemaining > 1 ? 'seconds' : 'second'}.
+                    </AlertDescription>
+                    </Alert>
+                </div>
+            )
+        }
+    }
 
     return ( 
         <div className="p-4">
-            <h2 className="text-white text-xl mt-10 text-center">Transaccion ID: {id} </h2>
             <div className="w-full bg-white border-t border-b border-gray-200 px-5 py-10 text-gray-800">
                 <div className="w-full">
                     <div className="-mx-3 md:flex items-start">
@@ -99,7 +132,12 @@ const Checkout : React.FC<CheckoutProps> = ({
                         </div>
                         <div className="px-3 md:w-5/12">
                             <div className='w-full'>
-                                <ButtonPayment total={transaction.total} reference={transaction.code} giveaway={giveway.id} />
+                                <ButtonPayment 
+                                    total={transaction.total} 
+                                    reference={transaction.code} 
+                                    giveaway={giveway.id}
+                                    userId={user}    
+                                />
                             </div>
                         </div>
                     </div>

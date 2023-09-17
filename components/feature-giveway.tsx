@@ -43,7 +43,7 @@ import ImageUpload from "./ui/image-uplaod";
 
 interface GiveWaydProps {
   data: GiveWay;
-  tickets: number 
+  tickets: number;
 }
 
 type FormValues = z.infer<typeof formSchema>
@@ -59,7 +59,8 @@ const FeatureGiveway: React.FC<GiveWaydProps> = ({
     const [ntickets, setNtickets] = useState(tickets);
 
     let referenceCode = randomCode({length: 6, type: "alphanumeric"});
-    referenceCode = `${referenceCode}${Date.now()}`
+    referenceCode = `${referenceCode}${Date.now()}`;
+    referenceCode = `${referenceCode}!${data.id}`;
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -95,7 +96,7 @@ const FeatureGiveway: React.FC<GiveWaydProps> = ({
           toast.success("Espere mientras pasamos al proceso de compra!!.");
           form.reset();
           router.refresh();
-          router.push(`/transaccion/${referenceCode}!${data.id}`)
+          router.push(`/transaccion/${referenceCode}`)
         } catch (error: any) {
           toast.error('Algo malo ocurrió.');
         } finally {

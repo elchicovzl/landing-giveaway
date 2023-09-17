@@ -10,12 +10,14 @@ interface ButtonPaymentProps {
     total: string;
     reference: string;
     giveaway: string;
-  }
+    userId: string;
+}
 
 const ButtonPayment : React.FC<ButtonPaymentProps> = ({
     total,
     reference,
-    giveaway
+    giveaway,
+    userId
   }) => {
     const publicKey = process.env.NEXT_PUBLIC_WOMPI_PUBLIC_KEY;
     const integrity = process.env.NEXT_PUBLIC_WOMPI_PUBLIC_KEY;
@@ -51,7 +53,7 @@ const ButtonPayment : React.FC<ButtonPaymentProps> = ({
         script.setAttribute('data-amount-in-cents', cents.toString());
         script.setAttribute('data-reference', reference);
         script.setAttribute('data-signatureintegrity', integrationKey);
-        script.setAttribute('data-redirect-url', `${redirectUrl}/transaccion/${reference}!${giveaway}`)
+        script.setAttribute('data-redirect-url', `${redirectUrl}/transaccion/${reference}`)
 
         document.getElementById("form1").appendChild(script);
         

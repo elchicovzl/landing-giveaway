@@ -34,7 +34,7 @@ export async function POST(
         }
 
         const res = await fetch(`${apiUrl}/api/${store}/giveways/${giveawayId}/transactions`, {
-          method: 'POST',
+        method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
