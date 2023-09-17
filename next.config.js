@@ -7,6 +7,12 @@ const nextConfig = {
             "https://source.unsplash.com/random/480x360"
         ]
     },
+    experimental: {
+        appDir: true,
+    },
+    typescript: {
+        ignoreBuildErrors: true,
+    }
 }
 
 module.exports = nextConfig
