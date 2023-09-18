@@ -53,7 +53,7 @@ const ButtonPayment : React.FC<ButtonPaymentProps> = ({
         script.setAttribute('data-amount-in-cents', cents.toString());
         script.setAttribute('data-reference', reference);
         script.setAttribute('data-signatureintegrity', integrationKey);
-        script.setAttribute('data-redirect-url', `${redirectUrl2}/transaccion/${reference}`)
+        script.setAttribute('data-redirect-url', `https://landing-giveaway-2zo5kl6pr-elchicovzl.vercel.app/transaccion/${reference}`)
 
         document.getElementById("form1").appendChild(script);
         
