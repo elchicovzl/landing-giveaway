@@ -2,7 +2,7 @@
 
 import ButtonPayment from '@/components/button-payment';
 import { GiveWay, Transaction } from '@/types';
-import { Ticket } from "lucide-react";
+import { ShieldCheck, Ticket } from "lucide-react";
 import { useSearchParams } from 'next/navigation';
 import { NumericFormat } from "react-number-format";
 import { RedirectAfrer } from '@/components/redirect-after-seconds';
