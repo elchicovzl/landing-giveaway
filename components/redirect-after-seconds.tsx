@@ -10,7 +10,7 @@ interface RedirectAfrerProps {
     icon: JSX.Element;
     redirect: string;
     variant: string;
-  }
+}
 
 export const RedirectAfrer : React.FC<RedirectAfrerProps> = ({
     title,

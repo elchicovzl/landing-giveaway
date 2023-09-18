@@ -5,9 +5,6 @@ import { GiveWay, Transaction } from '@/types';
 import { Ticket } from "lucide-react";
 import { useSearchParams } from 'next/navigation';
 import { NumericFormat } from "react-number-format";
-import useRedirectAfterSeconds from '@/hooks/use-redirect-after-seconds';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { TriangleIcon, ShieldCheck } from 'lucide-react';
 import { RedirectAfrer } from '@/components/redirect-after-seconds';
 
 interface CheckoutProps {

@@ -21,7 +21,7 @@ const ButtonPayment : React.FC<ButtonPaymentProps> = ({
   }) => {
     const publicKey = process.env.NEXT_PUBLIC_WOMPI_PUBLIC_KEY;
     const integrity = process.env.NEXT_PUBLIC_WOMPI_PUBLIC_KEY;
-    const redirectUrl = process.env.NEXT_PUBLIC_WOMPI_REDIRECT_URL
+    const redirectUrl2 = process.env.NEXT_PUBLIC_WOMPI_REDIRECT_URL
     const widgerUrl = process.env.NEXT_PUBLIC_WOMPI_WIDGET_URL
 
     const integrationKey = sha256(`${reference}${total}COP${integrity}`);
@@ -53,7 +53,7 @@ const ButtonPayment : React.FC<ButtonPaymentProps> = ({
         script.setAttribute('data-amount-in-cents', cents.toString());
         script.setAttribute('data-reference', reference);
         script.setAttribute('data-signatureintegrity', integrationKey);
-        script.setAttribute('data-redirect-url', `${redirectUrl}/transaccion/${reference}`)
+        script.setAttribute('data-redirect-url', `${redirectUrl2}/transaccion/${reference}`)
 
         document.getElementById("form1").appendChild(script);
         
@@ -63,7 +63,7 @@ const ButtonPayment : React.FC<ButtonPaymentProps> = ({
                 element.remove()
             }
         }
-      }, [total, publicKey, integrationKey, reference, redirectUrl, widgerUrl])
+      }, [total, publicKey, integrationKey, reference, redirectUrl2, widgerUrl])
 
 
     return ( 
